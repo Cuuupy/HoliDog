@@ -2,10 +2,11 @@
 <html>
 <body>
 
-<p id="demo"></p>
-<select id="breedselect" onchange="BreedChanged()"></select>
-<select id="subbreedselect" onchange="RefreshImage()"></select>
-<img id="dogimage">
+<p>
+Select a breed <select id="breedselect" onchange="BreedChanged()"></select>
+and a sub-breed <select id="subbreedselect" onchange="RefreshImage()"></select>
+</p>
+<div><img id="dogimage"></div>
 
 <script>
 
@@ -30,7 +31,7 @@ breedReq.send();
 var imageReq = new XMLHttpRequest();
 imageReq.onreadystatechange = function(){
 	if (this.readyState == 4 && this.status == 200) {
-		ImageList = JSON.parse(this.response).message;
+		imageList = JSON.parse(this.response).message;
 		RefreshImage();
 	}
 };
@@ -55,7 +56,19 @@ function BreedChanged(){
 
 function RefreshImage(){
 	var picture = document.getElementById("dogimage");
-	picture.src = ImageList[Math.floor((Math.random() * 15) + 1)];
+	var subbreedSelect = document.getElementById("subbreedselect");
+	if(subbreedSelect.options.length == 1){
+		//No need to browse sub-breeds
+		picture.src = imageList[Math.floor(Math.random() * imageList.length)];
+	}else{
+		var subpictures = [];
+		for(i in imageList){
+			if(imageList[i].indexOf(subbreedSelect.options[subbreedSelect.selectedIndex].text) != -1){
+				subpictures.push(imageList[i]);
+			}
+		}
+		picture.src = subpictures[Math.floor(Math.random() * subpictures.length)];
+	}
 }
 
 </script>
