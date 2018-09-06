@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<p id="demo"></p>
+<select id="breedselect" onchange="BreedChanged()"></select>
+<select id="subbreedselect" onchange="RefreshImage()"></select>
+<img id="dogimage">
+
+<script>
+
+// We get the list of breeds and sub-breeds
+var breedData;
+var imageList;
+var breedReq = new XMLHttpRequest();
+breedReq.onreadystatechange = function(){
+	if (this.readyState == 4 && this.status == 200) {
+		breedData = JSON.parse(this.response);
+		var breeds = Object.keys(breedData.message);
+		var breedSelect = document.getElementById("breedselect");
+		for(i in breeds){
+			breedSelect.options[i] = new Option(breeds[i]);
+		}
+		BreedChanged();
+	}
+};
+breedReq.open("GET", "https://dog.ceo/api/breeds/list/all", true);
+breedReq.send();
+
+var imageReq = new XMLHttpRequest();
+imageReq.onreadystatechange = function(){
+	if (this.readyState == 4 && this.status == 200) {
+		ImageList = JSON.parse(this.response).message;
+		RefreshImage();
+	}
+};
+
+function BreedChanged(){
+	//Show sub-breeds in sub-breed select box
+	var breedSelect = document.getElementById("breedselect");
+	var subbreedSelect = document.getElementById("subbreedselect");
+	subbreedSelect.innerHTML = "";
+	var subbreeds = breedData.message[breedSelect.options[breedSelect.selectedIndex].text];
+	if(subbreeds.length == 0){
+		subbreedSelect.options[0] = new Option("No sub-breeds");
+	}else{
+		for(i in subbreeds){
+			subbreedSelect.options[i] = new Option(subbreeds[i]);
+		}
+	}
+	//Request pictures
+	imageReq.open("GET", "https://dog.ceo/api/breed/" + breedSelect.options[breedSelect.selectedIndex].text + "/images", true);
+	imageReq.send();
+}
+
+function RefreshImage(){
+	var picture = document.getElementById("dogimage");
+	picture.src = ImageList[Math.floor((Math.random() * 15) + 1)];
+}
+
+</script>
+
+</body>
+</html>
