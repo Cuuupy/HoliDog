@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html>
+<head>
+<title>Dog finder</title>
+<style>
+.class1{
+    font-family: verdana;
+    font-size: 20px;
+}
+p{
+	padding-left: 50px;
+}
+img{
+	border-radius: 8px;
+	margin-left: 50px;
+}
+.errormessage{
+	font-family: verdana;
+    font-size: 20px;
+	color: red;
+}
+</style>
+</head>
 <body>
 
-<p>
-Select a breed <select id="breedselect" onchange="BreedChanged()"></select>
-and a sub-breed <select id="subbreedselect" onchange="RefreshImage()"></select>
-</p>
+<p class="class1">Select a breed <select id="breedselect" class="class1" onchange="BreedChanged()"></select>
+and a sub-breed <select id="subbreedselect" class="class1" onchange="RefreshImage()"></select></p>
+
+<p class="class1">To change the image <button id="changeimage" class="class1" onclick="RefreshImage()">Get another image</button></p>
 <div><img id="dogimage"></div>
+<p id="errormessage" class="errormessage"></p>
 
 <script>
 
@@ -55,6 +77,7 @@ function BreedChanged(){
 }
 
 function RefreshImage(){
+	document.getElementById("errormessage").innerHTML = "";
 	var picture = document.getElementById("dogimage");
 	var subbreedSelect = document.getElementById("subbreedselect");
 	if(subbreedSelect.options.length == 1){
@@ -67,6 +90,8 @@ function RefreshImage(){
 				subpictures.push(imageList[i]);
 			}
 		}
+		if(subpictures.length == 0) document.getElementById("errormessage").innerHTML = "No image found!";
+
 		picture.src = subpictures[Math.floor(Math.random() * subpictures.length)];
 	}
 }
